@@ -1,6 +1,7 @@
 int peltPin = 3; //peltier cooler pin
 int peltPin1 = 5; //second peliter cooler pin
-double psuV = 8;
+double psuV = 10;
+float c;
 void setup() {
   pinMode(peltPin, OUTPUT);
   pinMode(peltPin1, OUTPUT);
@@ -12,18 +13,20 @@ void setup() {
 }
 
 void loop() {
-  OutputVoltage(5, psuV, peltPin); //test to see whether mosfet actually outputs certain voltage
-  OutputVoltage(5, psuV, peltPin1);
+  Serial.println(readTemperature());
+  OutputVoltage(0, psuV, peltPin); //test to see whether mosfet actually outputs certain voltage
+  OutputVoltage(0, psuV, peltPin1);
   delay(100);
-
-
-  float in = analogRead(A0);
-  float C = (598 - in) / 2.43 + 27.5;
-  Serial.print(in);
-  Serial.print("       ");
-  Serial.println(C);
 }
 
+float readTemperature(){
+  float in = analogRead(A0);
+  if(in<=622)
+    c = (-0.3234*in)+220.1; 
+  else
+    c = (-0.6932*in)+450.08;
+  return c;
+}
 void OutputVoltage(double v, double SrcV, int pin) {
   analogWrite(pin, (v / SrcV) * 255);
 }
