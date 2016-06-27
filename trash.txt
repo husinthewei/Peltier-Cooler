@@ -1,0 +1,15 @@
+void recordTemp(double temp){
+  for(int i = sizeof(prevTemps) - 2; i >= 0; i--){
+     prevTemps[i] = prevTemps[i+1];
+  }
+
+  prevTemps[sizeof(prevTemps) - 1] = temp;
+}
+
+double getAverage(){
+  double sum = 0;
+  for(int i = 0; i < sizeof(prevTemps); i++){
+    sum += prevTemps[i];
+  }
+  return (double)(sum / sizeof(prevTemps));
+}

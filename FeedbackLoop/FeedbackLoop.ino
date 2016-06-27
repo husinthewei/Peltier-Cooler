@@ -1,4 +1,4 @@
-int targetTemp = -2; //setting temporary target te,p
+int targetTemp = -2; //setting temporary target temp
 //PID stuff
 int Actual = 0;
 int Error = 0;
@@ -13,10 +13,10 @@ int ScaleFactor = 1;
 double prevTemps[10];
 double averageTemp;
 //
-int peltPin = 3; //peltier cooler pin
-int peltPin1 = 2; //second peliter cooler pin
+int peltPin = 3; //peltier cooler pin (smaller peltier)
+int peltPin1 = 5; //second peliter cooler pin (big peltier)
 //
-double psuV = 10;
+double psuV = 12;
 //
 float c;
 //
@@ -32,28 +32,18 @@ void setup() {
 }
 
 void loop() {
-
-  //new feedback algorithm:
-  //Use equation to find ideal voltage for certain temperature. 
-  //ex: use from graphs during diode testing
-  //loop- 
-  //1. if temp is (>2C?) above targer, peltier max
-  //2. if temp is (>2C?) below target, peltier 0.4
-  //3. if temp is +-2 from target, peltier at ideal
-  
-  //double currentTemp = readTemperature();
-  //double diff = currentTemp - targetTemp;
-
-  //double targV = constrain(((diff <= 0) ? 0 : diff + 4), 6, psuV); //
-  //OutputVoltage(targV, psuV, peltPin);
-  //OutputVoltage(targV, psuV, peltPin1);
   double currentTemp = readTemperature();
-  int drive = getPID();
-  analogWrite(peltPin, drive);
-  analogWrite(peltPin1, drive);
+  //int drive = getPID();
+  int drive = 0;
+  //analogWrite(peltPin, 30);     // smaller & orange 
+  //analogWrite(peltPin1, 30);//bigger & gray
 
+  OutputVoltage(3, psuV, peltPin);
+  OutputVoltage(3, psuV, peltPin1);
+  
   Serial.print("T: ");
   Serial.print(currentTemp);
+  
   Serial.print("   Dr:");
   Serial.println(drive);
   
@@ -89,6 +79,7 @@ int getPID(){
   return Drive;
 }
 
+
 float readTemperature(){
   float in = analogRead(A0);
   if(in<=622)
@@ -100,4 +91,3 @@ float readTemperature(){
 void OutputVoltage(double v, double SrcV, int pin) {
   analogWrite(pin, (v / SrcV) * 255);
 }
-
