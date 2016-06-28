@@ -10,11 +10,12 @@ double kI = 0.3;
 double kD = 0.3;
 int ScaleFactor = 1;
 //
-double prevTemps[10];
+const int len = 50;
+double prevTemps[len];
 double averageTemp;
 //
 int peltPin = 3; //peltier cooler pin (smaller peltier)
-int peltPin1 = 5; //second peliter cooler pin (big peltier)
+int peltPin1 = 6; //second peliter cooler pin (big peltier)
 //
 double psuV = 12;
 //
@@ -29,20 +30,28 @@ void setup() {
   pinMode(A1, OUTPUT);
   digitalWrite(A1, LOW);
   Last = analogRead(A0);
+
+  double temp = readTemperature();
+  for(int i = 0; i < len; i++)
+    prevTemps[i] = temp;
 }
 
 void loop() {
   double currentTemp = readTemperature();
+  recordTemp(currentTemp);
   //int drive = getPID();
   int drive = 0;
   //analogWrite(peltPin, 30);     // smaller & orange 
   //analogWrite(peltPin1, 30);//bigger & gray
 
-  OutputVoltage(3, psuV, peltPin);
-  OutputVoltage(3, psuV, peltPin1);
+  OutputVoltage(7, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
+  OutputVoltage(5, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
   
   Serial.print("T: ");
   Serial.print(currentTemp);
+
+  Serial.print("   Tave: ");
+  Serial.print(getAve());
   
   Serial.print("   Dr:");
   Serial.println(drive);
@@ -79,9 +88,23 @@ int getPID(){
   return Drive;
 }
 
+void recordTemp(double temp){
+  for(int i = len-1; i > 0 ; i--){
+    prevTemps[i] = prevTemps[i-1];
+  }
+  prevTemps[0] = temp;
+}
 
-float readTemperature(){
-  float in = analogRead(A0);
+double getAve(){
+  double sum = 0;
+  for(int i = 0; i < len; i++)
+    sum += prevTemps[i];
+
+  return (double)(sum / len); 
+}
+
+double readTemperature(){
+  double in = analogRead(A0);
   if(in<=622)
     c = (-0.3234*in)+220.1; 
   else
