@@ -44,13 +44,13 @@ void loop() {
   //analogWrite(peltPin, 30);     // smaller & orange 
   //analogWrite(peltPin1, 30);//bigger & gray
 
-  OutputVoltage(7, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
-  OutputVoltage(5, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
+  OutputVoltage(12, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
+  OutputVoltage(12, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
   
   Serial.print("T: ");
   Serial.print(currentTemp);
 
-  Serial.print("   Tave: ");
+  Serial.print("   TAve: ");
   Serial.print(getAve());
   
   Serial.print("   Dr:");
