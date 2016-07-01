@@ -10,7 +10,7 @@ double kI = 0.3;
 double kD = 0.3;
 int ScaleFactor = 1;
 //
-const int len = 50;
+const int len = 10;
 double prevTemps[len];
 double averageTemp;
 //
@@ -27,6 +27,7 @@ void setup() {
   Serial.begin(9600);
   analogReference(INTERNAL);
   pinMode(A0, INPUT_PULLUP);
+  //pinMode(A0, INPUT);
   pinMode(A1, OUTPUT);
   digitalWrite(A1, LOW);
   Last = analogRead(A0);
@@ -37,19 +38,23 @@ void setup() {
 }
 
 void loop() {
-  double currentTemp = readTemperature();
-  recordTemp(currentTemp);
+  //double currentTemp = readTemperature();
+  //recordTemp(currentTemp);
   //int drive = getPID();
   int drive = 0;
   //analogWrite(peltPin, 30);     // smaller & orange 
   //analogWrite(peltPin1, 30);//bigger & gray
 
-  OutputVoltage(12, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
-  OutputVoltage(12, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
-  
-  Serial.print("T: ");
-  Serial.print(currentTemp);
+  OutputVoltage(5, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
+  OutputVoltage(5, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
 
+  double raw = analogRead(A0);
+  Serial.print(raw);
+  
+  Serial.print("    T: ");
+  //Serial.print(currentTemp);
+
+  recordTemp(raw);
   Serial.print("   TAve: ");
   Serial.print(getAve());
   
