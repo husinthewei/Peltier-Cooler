@@ -150,6 +150,7 @@ double getAve(){ //calculates and returns average
 double readTemperature(){ //calculates and returns temperature. 
   double in = analogRead(A0); //gets the raw "temperature value" from the diode
 
+  /*
   //this if statement is kind of like a piecewise function. If raw is less than 622, use one equation; otherwise, use the other
   if(in<=622)
     c = (-0.3234*in)+220.1; //first equation (changed 220.1 to 225.1 for calibration)
@@ -157,7 +158,9 @@ double readTemperature(){ //calculates and returns temperature.
     c = (-0.6932*in)+450.08;//seconds equation
 
   //If you find a better equation for temperature that does not require a piecewise function, comment the piecewise and use something like...
-  //c = (-21321 * in) + 1231;
+  //c = (-21321 * in) + 1231;*/
+
+  c = (-0.2055*in) + 150.93;
     
   return c;
 }
