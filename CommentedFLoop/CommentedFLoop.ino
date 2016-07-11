@@ -39,7 +39,7 @@ double prevTemps[len];
 double averageTemp;
 //
 int peltPin = 3; //peltier cooler pin (smaller peltier on board)
-int peltPin1 = 6; //second peliter cooler pin (big peltier connected to heatsink)
+int peltPin1 = 9; //second peliter cooler pin (big peltier connected to heatsink)
 //
 double psuV = 12; //Value used for calculation in OutputVoltage();
 //
@@ -71,8 +71,8 @@ void loop() {
   //analogWrite(peltPin, drive);  //writes drive value to small Peltier
   //analogWrite(peltPin1, drive); //writes drive value to large Peltier
 
-  OutputVoltage(5, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
-  OutputVoltage(5, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
+  OutputVoltage(2, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
+  OutputVoltage(2, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
 
   double raw = analogRead(A0); //reads the raw value from the diode
   Serial.print(raw); //prints out the raw value
@@ -152,7 +152,7 @@ double readTemperature(){ //calculates and returns temperature.
 
   //this if statement is kind of like a piecewise function. If raw is less than 622, use one equation; otherwise, use the other
   if(in<=622)
-    c = (-0.3234*in)+220.1; //first equation
+    c = (-0.3234*in)+220.1; //first equation (changed 220.1 to 225.1 for calibration)
   else
     c = (-0.6932*in)+450.08;//seconds equation
 
