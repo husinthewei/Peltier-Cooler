@@ -71,8 +71,8 @@ void loop() {
   //analogWrite(peltPin, drive);  //writes drive value to small Peltier
   //analogWrite(peltPin1, drive); //writes drive value to large Peltier
 
-  OutputVoltage(2, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
-  OutputVoltage(2, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
+  OutputVoltage(3, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
+  OutputVoltage(3, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
 
   double raw = analogRead(A0); //reads the raw value from the diode
   Serial.print(raw); //prints out the raw value
@@ -160,7 +160,7 @@ double readTemperature(){ //calculates and returns temperature.
   //If you find a better equation for temperature that does not require a piecewise function, comment the piecewise and use something like...
   //c = (-21321 * in) + 1231;*/
 
-  c = (-0.2055*in) + 150.93;
+  c = (-0.4022*in) + 268.97;
     
   return c;
 }
