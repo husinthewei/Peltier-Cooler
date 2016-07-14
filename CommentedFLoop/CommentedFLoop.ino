@@ -24,15 +24,15 @@
  
 int targetTemp = -2; //setting temporary target temp. Attempts to stay at this.
 //PID stuff: Values for PID calculation
-int Actual = 0; 
-int Error = 0;
-int Integral = 0;
-int Last = 0;
-int IntThresh = targetTemp + 5;
-double kP = 8;   //P coefficient: modify if your are calibrating PID 
-double kI = 0.3; //Integral coefficient
-double kD = 0.3; //Derivative coefficient
-int ScaleFactor = 1;
+double Actual = 0; 
+double Error = 0;
+double Integral = 0;
+double Last = 0;
+int IntThresh = targetTemp + 12;
+double kP = 20;   //P coefficient: modify if your are calibrating PID 
+double kI = 0.1; //Integral coefficient
+double kD = 0.6; //Derivative coefficient
+double ScaleFactor = 1;
 //
 const int len = 10; //How many samples to use for the average. The time the sample is over is the number of samples divided by 10 (i.e. 10 samples / 10 = 1 second)
 double prevTemps[len];
@@ -53,7 +53,7 @@ void setup() {
   pinMode(A0, INPUT_PULLUP); //Declares as input and uses the 10k resistor as pullup. This is the input pin of the diode (analog pin 0)
   pinMode(A1, OUTPUT); //Output pin of the diode (analog pin 1)
   digitalWrite(A1, LOW); 
-  Last = analogRead(A0);
+  Last = readTemperature();
 
   double temp = readTemperature();
   for(int i = 0; i < len; i++)
@@ -71,8 +71,8 @@ void loop() {
   //analogWrite(peltPin, drive);  //writes drive value to small Peltier
   //analogWrite(peltPin1, drive); //writes drive value to large Peltier
 
-  OutputVoltage(3, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
-  OutputVoltage(3, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
+  OutputVoltage(0, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
+  OutputVoltage(0, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
 
   double raw = analogRead(A0); //reads the raw value from the diode
   Serial.print(raw); //prints out the raw value
@@ -80,6 +80,9 @@ void loop() {
   Serial.print("    T: ");
   Serial.print(currentTemp); //prints out the current temperature
 
+  Serial.print("    Tf: ");
+  Serial.print(getF(currentTemp));
+  
   Serial.print("   TAve: ");
   Serial.print(getAve()); //prints out the calculated real-time average
   
@@ -107,17 +110,20 @@ int getPID(){ //function that calculates and returns PID value.
   Actual = readTemperature();
   Error = Actual - targetTemp;
 
-  if(abs(Error)<IntThresh){
+  if(abs(Error)<IntThresh && abs(Last-Actual) < 4){ //preventing spikes
     Integral = Integral + Error;
   }
   else{
     Integral = 0;
+    //for(int j = 0; j < 10; j++)
+      //Serial.println("stop");
   }
   
-  int P = Error * kP;
-  int I = Integral * kI;
-  int D = (Last-Actual)*kD;
-  int Drive = P+I+D;
+  double P = Error * kP;
+  double I = Integral * kI;
+  double D = (Last-Actual)*kD;
+  double Drive = P+I+D;
+  Last = Actual;
   Serial.print("P: ");
   Serial.print(P);
   Serial.print("    I:");
@@ -126,8 +132,11 @@ int getPID(){ //function that calculates and returns PID value.
   Serial.print(D);
   Serial.print("    ");
   Drive = Drive*ScaleFactor;
-  if(abs(Drive)>255){
+  if(Drive>255){
     Drive = 255;
+  }
+  if(Drive<0){
+    Drive = 0;
   }
   return Drive;
 }
@@ -160,10 +169,15 @@ double readTemperature(){ //calculates and returns temperature.
   //If you find a better equation for temperature that does not require a piecewise function, comment the piecewise and use something like...
   //c = (-21321 * in) + 1231;*/
 
-  c = (-0.4022*in) + 268.97;
+  c = (-0.5584*in) + 357.63;
     
   return c;
 }
+
+double getF(double C){
+  return (9*(C/5) + 32);
+}
+
 void OutputVoltage(double v, double SrcV, int pin) { //uses PWM to output voltage using calculated duty cycle. Ex: v = 2.4, SrcV = 12. Uses a 20% duty cycle
   analogWrite(pin, (v / SrcV) * 255);
 }
