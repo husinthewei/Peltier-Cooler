@@ -95,6 +95,7 @@ void loop() {
   double raw = analogRead(A0); //reads the raw value from the diode
   Serial.print(raw); //prints out the raw value
   
+  
   Serial.print("    T: ");
   Serial.print(currentTemp); //prints out the current temperature
 
