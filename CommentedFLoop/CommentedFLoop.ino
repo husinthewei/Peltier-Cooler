@@ -38,6 +38,11 @@ const int len = 10; //How many samples to use for the average. The time the samp
 double prevTemps[len];
 double averageTemp;
 //
+int badReadings = 0;
+//
+int tempThresh = 0;
+int LEDPin = 10;
+//
 int peltPin = 3; //peltier cooler pin (smaller peltier on board)
 int peltPin1 = 9; //second peliter cooler pin (big peltier connected to heatsink)
 //
@@ -52,17 +57,25 @@ void setup() {
   analogReference(INTERNAL); //Brings the reference voltage to 1.1v so that diode has more resolution.
   pinMode(A0, INPUT_PULLUP); //Declares as input and uses the 10k resistor as pullup. This is the input pin of the diode (analog pin 0)
   pinMode(A1, OUTPUT); //Output pin of the diode (analog pin 1)
+  pinMode(LEDPin, OUTPUT); //LED pin is output
   digitalWrite(A1, LOW); 
   Last = readTemperature();
-
+  
   double temp = readTemperature();
   for(int i = 0; i < len; i++)
     prevTemps[i] = temp;
 }
 
 void loop() { 
+
+  
   double currentTemp = readTemperature(); //stores the current temperature in a variable called currentTemp 
-  recordTemp(currentTemp); //records the temperature for calculating average later
+  double ave = getAve();
+  if(badReading(currentTemp))
+    currentTemp = getAve(); //using average if current reading is "outlier"
+  else
+    recordTemp(currentTemp); //records the temperature for calculating average later
+  
   
   int drive = 0; //Current drive value is 0, so no PID is used. If using PID, comment this line out
     
@@ -71,9 +84,14 @@ void loop() {
   //analogWrite(peltPin, drive);  //writes drive value to small Peltier
   //analogWrite(peltPin1, drive); //writes drive value to large Peltier
 
-  OutputVoltage(0, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5
-  OutputVoltage(0, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A)
+  OutputVoltage(12, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5. NEW TE-127-1.0-1.3 max(15.7V, 3.6A). BOTH - TopHot=br, TopCold=rb
+  OutputVoltage(12, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A).  UT15
 
+  if(ave > tempThresh)
+    digitalWrite(LEDPin, LOW);
+  else
+    digitalWrite(LEDPin, HIGH);
+    
   double raw = analogRead(A0); //reads the raw value from the diode
   Serial.print(raw); //prints out the raw value
   
@@ -84,7 +102,7 @@ void loop() {
   Serial.print(getF(currentTemp));
   
   Serial.print("   TAve: ");
-  Serial.print(getAve()); //prints out the calculated real-time average
+  Serial.print(ave); //prints out the calculated real-time average
   
   Serial.print("   Dr:");
   Serial.println(drive); //prints out what the drive value is 
@@ -141,6 +159,18 @@ int getPID(){ //function that calculates and returns PID value.
   return Drive;
 }
 
+boolean badReading(double temp){
+  double ave = getAve();
+  if(abs(temp-ave) >=3 && badReadings < 5){
+    badReadings++;
+    return true;
+  }
+  else{
+    badReadings = 0;
+    return false;
+  }
+}
+
 void recordTemp(double temp){ //records temperature for calculating average
   for(int i = len-1; i > 0 ; i--){
     prevTemps[i] = prevTemps[i-1];
@@ -152,25 +182,12 @@ double getAve(){ //calculates and returns average
   double sum = 0;
   for(int i = 0; i < len; i++)
     sum += prevTemps[i];
-
   return (double)(sum / len); 
 }
 
 double readTemperature(){ //calculates and returns temperature. 
   double in = analogRead(A0); //gets the raw "temperature value" from the diode
-
-  /*
-  //this if statement is kind of like a piecewise function. If raw is less than 622, use one equation; otherwise, use the other
-  if(in<=622)
-    c = (-0.3234*in)+220.1; //first equation (changed 220.1 to 225.1 for calibration)
-  else
-    c = (-0.6932*in)+450.08;//seconds equation
-
-  //If you find a better equation for temperature that does not require a piecewise function, comment the piecewise and use something like...
-  //c = (-21321 * in) + 1231;*/
-
   c = (-0.5584*in) + 357.63;
-    
   return c;
 }
 
