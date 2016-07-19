@@ -33,6 +33,7 @@ def getTempAve(): #Average over the out_Period
     for i in temps:
         sum += i
     return (sum / len(temps))
+
 signal.signal(signal.SIGINT, SIGINT_handler)
 
 port_names=[]
@@ -58,29 +59,35 @@ while(out_period <0.1):
 
 ser=serial.Serial(port=port_names[int(user_port_selection)],baudrate=9600,timeout=1)
 
+    
+def syncToBoard():
+    mycmd = ""
+    while(mycmd != "\n"):
+        mycmd=ser.read()
+
 start = time.time()
 
+syncToBoard()
 while(1):
     msg = ""
     mycmd = ""
-    global start
     while(mycmd != "\n"):
         msg += mycmd
         mycmd=ser.read()
     
     
-    
+    global start
     if(len(msg)>0):
         now= time.strftime("%Y-%m-%dT%H:%M:%S") #ISO 8601 time format
         msg = getTemp(msg)
-        print msg
+        #print msg
         recordTemp(msg)
         dt = time.time() - start
         if(dt >= out_period):
             start = time.time()
             msg = getTempAve()
             resetTemps()
-            print dt
+            #print dt
             with open("Log.txt", "a") as f:
 	       f.write("%s    %s\n" %(now, msg))
             print ("%s    %s" %(now, msg))
