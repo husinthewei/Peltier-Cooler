@@ -6,6 +6,7 @@ import serial.tools.list_ports
 import serial
 import signal # For trapping ctrl-c or SIGINT
 import sys # For exiting program with exit code
+import csv
 #import smtplib 
 
 temps = ()
@@ -89,6 +90,9 @@ while(1):
             #print dt
             with open("Log.txt", "a") as f:
 	       f.write("%s    %s\n" %(now, msg))
+	    #with open('Log.csv', 'a') as csvfile:
+ 	    #   writer = csv.writer(csvfile)
+	    #   writer.writerow([now, str(msg)])
             print ("%s    %s" %(now, msg))
 
 
