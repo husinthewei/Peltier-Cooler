@@ -6,6 +6,7 @@ import serial.tools.list_ports
 import serial
 import signal # For trapping ctrl-c or SIGINT
 import sys # For exiting program with exit code
+#import smtplib 
 
 temps = ()
 
@@ -58,7 +59,6 @@ while(out_period <0.1):
     out_period = input('Output data how often(seconds)? Minimum 0.1s    ')
 
 ser=serial.Serial(port=port_names[int(user_port_selection)],baudrate=9600,timeout=1)
-
     
 def syncToBoard():
     mycmd = ""
@@ -66,7 +66,6 @@ def syncToBoard():
         mycmd=ser.read()
 
 start = time.time()
-
 syncToBoard()
 while(1):
     msg = ""

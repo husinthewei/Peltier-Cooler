@@ -21,6 +21,9 @@ double psuV = 12;
 //
 float c;
 //
+int changeCount = 0;
+boolean reachedOn = false;
+//
 void setup() {
   pinMode(peltPin, OUTPUT);
   pinMode(peltPin1, OUTPUT);

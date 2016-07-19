@@ -49,6 +49,12 @@ int peltPin1 = 9; //second peliter cooler pin (big peltier connected to heatsink
 double psuV = 12; //Value used for calculation in OutputVoltage();
 //
 float c;
+//mechanism to turn off if gets too hot (e.g. fan turns off or some failure)
+int changeCount = 0; //make sure at least 30 times before switching states
+double onThresh = -8;
+double badThresh = 0;
+boolean reachedOn = false;
+int outV = 12;
 //
 void setup() {
   pinMode(peltPin, OUTPUT); 
@@ -84,9 +90,11 @@ void loop() {
   //analogWrite(peltPin, drive);  //writes drive value to small Peltier
   //analogWrite(peltPin1, drive); //writes drive value to large Peltier
 
-  OutputVoltage(12, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5. NEW TE-127-1.0-1.3 max(15.7V, 3.6A). BOTH - TopHot=br, TopCold=rb
-  OutputVoltage(12, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A).  UT15
+  OutputVoltage(outV, psuV, peltPin); // smaller & orange (max 8.6V, and 6A) Max 9.5. NEW TE-127-1.0-1.3 max(15.7V, 3.6A). BOTH - TopHot=br, TopCold=rb
+  OutputVoltage(outV, psuV, peltPin1);//bigger & gray (max 14.5V, and 14.7A).  UT15
 
+  checkSafe(ave);
+    
   if(ave > tempThresh)
     digitalWrite(LEDPin, LOW);
   else
@@ -127,6 +135,27 @@ void loop() {
  * readTemperature(); Calculates temperature form raw input and returns it. Can be used like:  double currentTemp = readTemperature();
  * OutputVoltage(v, SrcV, pin); Calculates duty cycle to use to reach v from the SrcV (source voltage) and outputs it to the pin. Can be used like: OutputVoltage(3, psuV, peltPin);
  */
+
+void checkSafe(double ave){
+  if(reachedOn == false && ave < onThresh)
+    changeCount +=1;
+    
+  if(changeCount >= 30 && reachedOn == false){
+    changeCount = 0;
+    reachedOn = true;
+  }
+
+  if(reachedOn == true && ave >= badThresh)
+    changeCount +=1;
+
+  if(reachedOn == true && ave < badThresh)
+    changeCount = 0;
+    
+  if(changeCount >= 30 && reachedOn == true){
+    changeCount = 0;
+    outV = 0;
+  }
+}
 
 int getPID(){ //function that calculates and returns PID value.  
   Actual = readTemperature();
