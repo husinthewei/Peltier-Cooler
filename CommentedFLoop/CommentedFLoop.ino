@@ -91,8 +91,11 @@ void loop() {
     digitalWrite(LEDPin, LOW);
   else
     digitalWrite(LEDPin, HIGH);
+
+  Serial.print(currentTemp);
     
   double raw = analogRead(A0); //reads the raw value from the diode
+  Serial.print("    Raw: ");
   Serial.print(raw); //prints out the raw value
   
   
