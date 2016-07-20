@@ -10,6 +10,7 @@ import csv
 #import smtplib 
 
 temps = ()
+Program_Start_Time = time.strftime("%Y%m%dT%H%M%S")
 
 def SIGINT_handler(signal, frame):
         print('Quitting program!')
@@ -64,10 +65,23 @@ ser=serial.Serial(port=port_names[int(user_port_selection)],baudrate=9600,timeou
 def syncToBoard():
     mycmd = ""
     while(mycmd != "\n"):
-        mycmd=ser.read()
+        mycmd=ser.read()    
 
 start = time.time()
 syncToBoard()
+
+def writeToTxt(now, msg):
+    global Program_Start_Time
+    with open("Logs\Log%s.txt"%(Program_Start_Time), "a") as f:        #Write to text document
+        f.write("%s    %s\n" %(now, msg))    
+
+def writeToCsv(now, msg):
+    global Program_Start_Time
+    #fileDir = 'Logs\Log%s.csv'%(Program_Start_Time)
+    with open('Logs\Log%s.csv'%(Program_Start_Time), 'ab') as csvfile: #Write to csv file
+        writer = csv.writer(csvfile)
+	writer.writerow([now, str(msg)])
+	
 while(1):
     msg = ""
     mycmd = ""
@@ -77,22 +91,18 @@ while(1):
     
     
     global start
+    global Program_Start_Time
     if(len(msg)>0):
         now= time.strftime("%Y-%m-%dT%H:%M:%S") #ISO 8601 time format
         msg = getTemp(msg)
-        #print msg
         recordTemp(msg)
         dt = time.time() - start
         if(dt >= out_period):
             start = time.time()
             msg = getTempAve()
             resetTemps()
-            #print dt
-            with open("Log.txt", "a") as f:
-	       f.write("%s    %s\n" %(now, msg))
-	    #with open('Log.csv', 'a') as csvfile:
- 	    #   writer = csv.writer(csvfile)
-	    #   writer.writerow([now, str(msg)])
+	    #writeToTxt(now, msg)
+            writeToCsv(now, msg)
             print ("%s    %s" %(now, msg))
 
 
