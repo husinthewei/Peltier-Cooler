@@ -7,9 +7,13 @@ import serial
 import signal # For trapping ctrl-c or SIGINT
 import sys # For exiting program with exit code
 import csv
-#import smtplib 
+import smtplib 
 
+global temps
 temps = ()
+global EmailSent
+EmailSent = False
+global Program_Start_Time
 Program_Start_Time = time.strftime("%Y%m%dT%H%M%S")
 
 def SIGINT_handler(signal, frame):
@@ -81,18 +85,60 @@ def writeToCsv(now, msg):
     with open('Logs\Log%s.csv'%(Program_Start_Time), 'ab') as csvfile: #Write to csv file
         writer = csv.writer(csvfile)
 	writer.writerow([now, str(msg)])
-	
+
+def sendFailureEmail():
+    fromaddr = 'peltier1w8cooler@gmail.com'
+    #toaddrs = ['wei4wei@gmail.com', 'smcnama1@terpmail.umd.edu'] #testing emails
+    toaddrs  = ['wei4wei@gmail.com', 'smcnama1@terpmail.umd.edu', 'mbreilly@hep.upenn.edu', 'mayers408@gmail.com'] #all emails
+    username = 'peltier1w8cooler@gmail.com'
+    password = 'somethingbadhappened'
+    
+    try:
+        server = smtplib.SMTP('smtp.gmail.com:587')
+        server.ehlo()
+        server.starttls()
+        server.login(username,password)
+    except Exception:
+        print "Failed to connect to email server\n"
+    
+    temp = "unknown"
+    
+    if(len(temps) > 0):
+        temp = str(getTempAve())
+    
+    for addr in toaddrs:
+        msg = "\r\n".join([
+        "From: %s"%fromaddr,
+        "To: %s"%addr,
+        "Subject: Failure",
+        "",
+        "Something failed in the peltier setup. Possibly check it out. The current temperature is above 0C. This may not be urgent; the Peltiers have just been turned off."
+        ])
+        try:
+            server.sendmail(fromaddr, addr, msg)
+        except Exception:
+            print "Email failed to send\n"
+    try:
+        server.quit()
+    except Exception:
+        print "Failed to disconnect to email server\n"
+    
+		
 while(1):
     msg = ""
     mycmd = ""
     while(mycmd != "\n"):
         msg += mycmd
         mycmd=ser.read()
-    
-    
     global start
     global Program_Start_Time
-    if(len(msg)>0):
+    global EmailSent        
+    
+    if("failure" in str(msg) and EmailSent == False):
+        sendFailureEmail()
+        print "Email Sent"
+        EmailSent = True;
+    if(len(msg)>0 and msg != "failure"):
         now= time.strftime("%Y-%m-%dT%H:%M:%S") #ISO 8601 time format
         msg = getTemp(msg)
         recordTemp(msg)
@@ -104,5 +150,6 @@ while(1):
 	    #writeToTxt(now, msg)
             writeToCsv(now, msg)
             print ("%s    %s" %(now, msg))
+        
 
 

@@ -82,7 +82,6 @@ void loop() {
   else
     recordTemp(currentTemp); //records the temperature for calculating average later
   
-  
   int drive = 0; //Current drive value is 0, so no PID is used. If using PID, comment this line out
     
   //*Uncomment below part to do PID stuff
@@ -120,7 +119,6 @@ void loop() {
   Serial.println(drive); //prints out what the drive value is 
   
   delay(100); //At the end of the loop, delays for 100 milliseconds. Gives Arduino a break. 
-
   //end of the loop; goes back to the beginning of the loop
 }
 
@@ -154,6 +152,9 @@ void checkSafe(double ave){
   if(changeCount >= 30 && reachedOn == true){
     changeCount = 0;
     outV = 0;
+    for(int i = 0; i < 3; i++)
+      Serial.println("failure");//sent three times just in case
+      
   }
 }
 
