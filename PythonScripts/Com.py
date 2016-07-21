@@ -6,6 +6,7 @@ import serial.tools.list_ports
 import serial
 import signal # For trapping ctrl-c or SIGINT
 import sys # For exiting program with exit code
+import matplotlib.pyplot as plt
 import csv
 import smtplib 
 
@@ -13,7 +14,7 @@ Temps = () #tuple to store temperatures for average temperature calculations
 EmailSent = False #Only send the email alert once
 LastTempKnown = 22 #Used for email alert in case tuple is reset. Default is 22, or room temp
 Program_Start_Time = time.strftime("%Y%m%dT%H%M%S") #Time program began. For log file name
-
+Program_Start_Time_Long = time.time() #used for plotting x variable
 def SIGINT_handler(signal, frame): #Handling program exit
         print('Quitting program!')
         ser.close() #Ends serial connection
@@ -27,7 +28,10 @@ def getTemp(msg):
  
 def recordTemp(temp): #Adds the temp to the tuple for later average calculations
     global Temps
-    Temps = Temps + (float(temp),) 
+    try: 
+        Temps = Temps + (float(temp),) 
+    except:
+        pass
     
 def resetTemps(): #Clears the tuple for new average calculations
     global Temps
@@ -127,8 +131,29 @@ def sendFailureEmail():
     except Exception:
         print "Failed to disconnect to email server\n"
     
+#Plotting the data in matplotlib
+plt.ion()
+plt.xlabel("Hours since %s"%Program_Start_Time)
+plt.ylabel("Temperature (C)")
+plt.title("Temperature vs. Time")
+maxX = 0.001
+maxY = 5
+minY = -5
+def updateMaxMins(x,y):#Updating max/mins for the boundaries of the graph
+    global maxX,maxY,minY  
+    if(x > maxX - 0.01): #+ and - give a better spaced/looking graph
+        maxX = x + 0.01
+    if(y > maxY - 3):
+        maxY = y + 3
+    if(y < minY + 3):
+        minY = y - 3  
 
-
+def plotData(x,y): #graphing the data in matplotlib
+    global maxX,maxY,minY
+    updateMaxMins(x,y)    
+    plt.axis([0, maxX , minY, maxY]) #boundaries
+    plt.scatter(x, y)
+    plt.pause(0.02)
 
 Start = time.time() #reference time point for the output period.
 syncToBoard()	#Makes sure the script doesn't start in the middle of a line
@@ -159,10 +184,12 @@ while(1):     #Main loop
             else:
                 msg = "No temperature data"
             resetTemps() #reset the tuple
-	    #writeToTxt(now, msg) #Write the data to text document
+	    #writeToTxt(now, msg) #Write the data sto text document
             writeToCsv(now, msg) #Write the data to csv file
-            
             print ("%s    %s" %(now, msg)) #Write the data to console
+            if(msg != "No temperature data"):
+                plotData(float((time.time()-Program_Start_Time_Long)/3600), float(msg)) 
+                #plots the temperature vs. hours since start
         
 
 
