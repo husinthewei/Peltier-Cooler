@@ -116,7 +116,7 @@ def sendFailureEmail():
         "To: %s"%addr,
         "Subject: Failure",
         "",
-        "Something failed in the peltier setup. Possibly check it out if you around. The last known temp is %sC. This may not be urgent; the Peltiers have already been turned off."%temp
+        "Something failed in the peltier setup. Possibly check it out if you are around. The last known temp is %sC. This may not be urgent; the Peltiers have already been turned off."%temp
         ])
         try:
             server.sendmail(fromaddr, addr, msg)
