@@ -185,9 +185,9 @@ while(1):     #Main loop
                 msg = "No temperature data"
             resetTemps() #reset the tuple
 	    #writeToTxt(now, msg) #Write the data sto text document
-            writeToCsv(now, msg) #Write the data to csv file
             print ("%s    %s" %(now, msg)) #Write the data to console
             if(msg != "No temperature data"):
+                writeToCsv(now, msg) #Write the data to csv file
                 plotData(float((time.time()-Program_Start_Time_Long)/3600), float(msg)) 
                 #plots the temperature vs. hours since start
         
