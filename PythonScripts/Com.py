@@ -153,7 +153,7 @@ def plotData(x,y): #graphing the data in matplotlib
     updateMaxMins(x,y)    
     plt.axis([0, maxX , minY, maxY]) #boundaries
     plt.scatter(x, y)
-    plt.pause(0.02)
+    plt.pause(out_period)
 
 Start = time.time() #reference time point for the output period.
 syncToBoard()	#Makes sure the script doesn't start in the middle of a line
