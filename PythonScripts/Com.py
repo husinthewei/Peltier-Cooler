@@ -148,6 +148,7 @@ p.setRange(yRange=[-20,32])
 p.setTitle('Temp vs. Time')
 p.setLabel(axis = 'left', text = 'Temperature (C)')
 p.setLabel(axis = 'bottom', text = "Hours since %s"%Program_Start_Time) 
+p.showGrid(x=True, y=True, alpha=None)
 curve = p.plot(pen=pg.mkPen('b'))#pen=None, symbol='o')#pen=pg.mkPen('r'))
 def plotData(x,y):
     global curve, xData, yData
