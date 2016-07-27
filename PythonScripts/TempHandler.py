@@ -18,14 +18,22 @@ class TempHandler:
    
     #Calculate the average from the data
     def getTempAve(self): #Average temperature over the out_Period
-        sum = 0
-        for i in self.Temps:
-            sum += i
-        return (sum / len(self.Temps))	#returns the average
+        if(len(self.Temps) > 0):
+            sum = 0
+            for i in self.Temps:
+                sum += i
+            ave = (sum / len(self.Temps))
+            self.LastTempKnown = ave
+            return ave	#returns the average
+        else:
+            return "No temperature data"
     
     #Extracting temperature from an Arduino message
-    def extractTemp(msg):
+    def extractTemp(self, msg):
         for i in range(len(msg)): #the instantaneous temperature is the first "word" in the message
             if(msg[i:i+1] == " "): #The space indicates a new word, so the extraction of the first word is stopped
+                self.recordTemp(msg[0:i])
                 return msg[0:i] 
-        return -999 #If not found, -999 is sent
+
+        
+        
