@@ -3,14 +3,16 @@ class TempHandler:
         self.Temps = () #tuple to store temperatures for average temperature calculations
         self.LastTempKnown = 22 #Used for email alert in case tuple is reset. Default is 22, or room temp
     
-    #Managing the temperature data
+    #Getters and setters
     def getLastTempKnown(self):
         return self.LastTempKnown
     def getTemps(self):
         return self.Temps        
     def setTemps(self, temps):
-        self.Temps = temps        
-    def recordTemp(self, temp):
+        self.Temps = temps      
+        
+                    
+    def recordTemp(self, temp): #Records data to tuple for average calculations.
         try: 
             self.Temps = self.Temps + (float(temp),) 
         except:
@@ -41,7 +43,7 @@ class TempHandler:
     #Extracting temperature from an Arduino message
     def extractTemp(self, msg):
         for i in range(len(msg)): #the instantaneous temperature is the first "word" in the message
-            if(msg[i:i+1] == " "): #The space indicates a new word, so the extraction of the first word is stopped
+            if(msg[i:i+1] == " "): #The space indicates a new word, so the extraction of the first word is stopped after first space
                 self.recordTemp(msg[0:i])
                 return msg[0:i] 
 

@@ -4,10 +4,10 @@ import serial
 class SerialHandler:
     
     def __init__(self):
-        self.Start_Time = time.strftime("%Y%m%dT%H%M%S") #Time program began. For log file name
+        self.Start_Time = time.strftime("%Y%m%dT%H%M%S") #Time program began. For log file name + documents
         self.Start_Time_Long = time.time() #used for plotting x variable
-        self.createConnection()
-        self.promptOutputPeriod()
+        self.createConnection() #Asks COM port and establishes connection with it
+        self.promptOutputPeriod() #Asks how often to output data
         
     def createConnection(self):
         port_names=[]		#Having user select the correct COM port for the Arduino
@@ -21,7 +21,7 @@ class SerialHandler:
         for w in port_names:
             print('%d) %s' %(i,w))
             i=i+1
-        total_ports=i # now i= total ports
+        total_ports=i # now i = total ports
         user_port_selection=input('\nSelect port: (0,1,2...)    ')
         if (int(user_port_selection)>=total_ports):
             print 'Port not in range'
@@ -41,7 +41,7 @@ class SerialHandler:
         while(mycmd != "\n"):
             mycmd=self.ser.read() 
             
-    def readLine(self):
+    def readLine(self): #Reads and returns a line of the arduino output
         msg = ""
         mycmd = ""
         try:
@@ -52,9 +52,10 @@ class SerialHandler:
             print "Serial Error"  
         return msg
     
-    def close(self):
+    def close(self): #Close serial connection
         self.ser.close()
     
+    #Getters and setters
     def getOut_Period(self):
         return self.Out_Period
     def getStart_Time(self):

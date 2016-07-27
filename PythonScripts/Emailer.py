@@ -1,9 +1,9 @@
 import smtplib 
-import TempHandler
+
 class Emailer:
     
     def __init__(self, email_sent = False):
-        self.EmailSent = email_sent
+        self.EmailSent = email_sent #Boolean. Allows email to be sent only once
         self.fromaddr = 'peltier1w8cooler@gmail.com'
         self.password = 'somethingbadhappened'
         self.toaddrs = ['wei4wei@gmail.com', 'smcnama1@terpmail.umd.edu'] #testing emails
@@ -37,7 +37,8 @@ class Emailer:
             server.quit()
         except Exception:
             print "Failed to disconnect to email server"
-            
+      
+    #Getters and setters              
     def getEmailSent(self):
         return self.EmailSent
     def setEmailSent(self, sent):
