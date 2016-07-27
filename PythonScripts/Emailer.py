@@ -41,9 +41,10 @@ class Emailer:
             ])
             try:
                 server.sendmail(self.fromaddr, addr, msg)
+                print "Email sent to: %s"%addr
                 self.EmailSent = True
             except Exception:
-                print "Email failed to send\n"
+                print "Email failed to send to: %s"%addr
         try:
             server.quit()
         except Exception:
