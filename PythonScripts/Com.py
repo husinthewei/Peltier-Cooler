@@ -6,12 +6,14 @@ import SerialHandler
 import TempHandler
 import FileWriter
 import Emailer
+import Grapher
 import time
 
 Serial_Handler = SerialHandler.SerialHandler()
 Temp_Handler = TempHandler.TempHandler()
 File_Writer = FileWriter.FileWriter()
 Failure_Emailer = Emailer.Emailer()
+Plotter = Grapher.Grapher(Serial_Handler.getStart_Time())
 
 def SIGINT_handler(signal, frame): #Handling program exit
         print('Quitting program!')
@@ -29,8 +31,7 @@ def onPeriod(): #Do the things that happens every period
     if(msg != "No temperature data"):
         #File_Writer.writeToTxt(Serial_Handler.getStart_Time(), now, msg) #Write the data to text document
         File_Writer.writeToCsv(Serial_Handler.getStart_Time(), now, msg) #Write the data to csv file named Log(start time)
-    #    plotData(float((time.time()-Program_Start_Time_Long)/3600), float(msg))
-    #            plotCount+=1  
+        Plotter.plotData(float((time.time()-Serial_Handler.getStart_Time_Long())/3600), float(msg))
       
 Start = time.time()             #reference time point for the output period.
 Serial_Handler.syncToBoard()	#Makes sure the script doesn't start in the middle of a line
