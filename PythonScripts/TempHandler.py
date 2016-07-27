@@ -4,6 +4,8 @@ class TempHandler:
         self.LastTempKnown = 22 #Used for email alert in case tuple is reset. Default is 22, or room temp
     
     #Managing the temperature data
+    def getLastTempKnown(self):
+        return self.LastTempKnown
     def getTemps(self):
         return self.Temps        
     def setTemps(self, temps):
@@ -27,7 +29,15 @@ class TempHandler:
             return ave	#returns the average
         else:
             return "No temperature data"
-    
+            
+    def getBestTemp(self): #returns the best temperature to notify. Used for quick email
+        temp = "unknown"
+        if(len(self.Temps) > 0):
+            temp = str(self.getTempAve())
+        elif(len(str(self.LastTempKnown)) > 0):
+            temp = str(self.LastTempKnown)
+        return temp
+            
     #Extracting temperature from an Arduino message
     def extractTemp(self, msg):
         for i in range(len(msg)): #the instantaneous temperature is the first "word" in the message
