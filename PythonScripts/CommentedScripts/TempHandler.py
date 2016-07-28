@@ -1,10 +1,9 @@
 class TempHandler:
-    
-    #Temp tuple stores temperatures for average calculations
     def __init__(self):
-        self.Temps = ()
-        self.LastTempKnown = 22 
+        self.Temps = () #tuple to store temperatures for average temperature calculations
+        self.LastTempKnown = 22 #Used for email alert in case tuple is reset. Default is 22, or room temp
     
+    #Getters and setters
     def getLastTempKnown(self):
         return self.LastTempKnown
     def getTemps(self):
@@ -12,31 +11,28 @@ class TempHandler:
     def setTemps(self, temps):
         self.Temps = temps      
         
-    #Records data to tuple for average calculations.
-    def recordTemp(self, temp): 
+                    
+    def recordTemp(self, temp): #Records data to tuple for average calculations.
         try: 
             self.Temps = self.Temps + (float(temp),) 
         except:
             pass      
-            
-    #Clears the tuple for new average calculations        
-    def resetTemps(self):
+    def resetTemps(self): #Clears the tuple for new average calculations
         self.Temps = () 
    
     #Calculate the average from the data
-    def getTempAve(self): 
+    def getTempAve(self): #Average temperature over the out_Period
         if(len(self.Temps) > 0):
             sum = 0
             for i in self.Temps:
                 sum += i
             ave = (sum / len(self.Temps))
             self.LastTempKnown = ave
-            return ave	
+            return ave	#returns the average
         else:
             return "No temperature data"
             
-    #returns the best temperature to notify. Used for quick email
-    def getBestTemp(self):
+    def getBestTemp(self): #returns the best temperature to notify. Used for quick email
         temp = "unknown"
         if(len(self.Temps) > 0):
             temp = str(self.getTempAve())
@@ -45,10 +41,9 @@ class TempHandler:
         return temp
             
     #Extracting temperature from an Arduino message
-    #The instantaneous temperature is the first "word" in the message
     def extractTemp(self, msg):
-        for i in range(len(msg)): 
-            if(msg[i:i+1] == " "): 
+        for i in range(len(msg)): #the instantaneous temperature is the first "word" in the message
+            if(msg[i:i+1] == " "): #The space indicates a new word, so the extraction of the first word is stopped after first space
                 self.recordTemp(msg[0:i])
                 return msg[0:i] 
 
