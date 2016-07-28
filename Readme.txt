@@ -23,9 +23,15 @@ How to run Com.py(NOTE: CURRENTLY ON WORKS ON WINDOWS):
 	*pyserial:
 	  After pip is installed, type in cmd: python -m pip install pyserial
 
-  Procedure-
+  Procedure 1 (command line)-
 	1. cd to the directory of the python script. Ex: cd C:\Users\Your_Username\Documents\Github\Peltier-Cooler\PythonScripts
-	2. type: python Com.py
+	2. type: python -B Com.py
+	3. Enter the com port. Ex: Usually type: 0 
+	4. Enter how often you want data output
+
+  Procedure 2 (user interface)-
+	1. go to the Pelter-Cooler folder
+	2. double click: RunPython
 	3. Enter the com port. Ex: Usually type: 0 
 	4. Enter how often you want data output
 
