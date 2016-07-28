@@ -18,11 +18,6 @@ double averageTemp;
 //If there are enough "outliers"/"bad readings", maybe they are actually correct. 
 //If there are enough consecutive bad readings, then trust them.
 int badReadings = 0;                   
-////Threshold to turn LED on
-////LED on signals that the system is running well (below or near target temp)
-int tempThresh = targetTemp + 2; 
-int LEDPin = 10; 
-//
 int peltPin = 3;   //peltier cooler pin (smaller peltier touching board)
 int peltPin1 = 9; //second peliter cooler pin (big peltier touching heatsink)
 //
@@ -35,6 +30,8 @@ int changeCount = 0;          //make sure at least 30 readings before switching 
 double onThresh = -8;        //temperature threshold to turn on this mechanism. (on state)
 double badThresh = 0;       //temperature threshold to signal that something bad is happening(bad state)
 boolean reachedOn = false; //signals on state
+int LEDPin = 10;          //LED that turns on during on state. Off signals a problem.
+//
 //
 void setup() {
   pinMode(peltPin, OUTPUT); 
@@ -45,6 +42,7 @@ void setup() {
   pinMode(A1, OUTPUT); 
   pinMode(LEDPin, OUTPUT); 
   digitalWrite(A1, LOW); 
+  digitalWrite(LEDPin, LOW);
   Last = readTemperature(); 
 
   //fills temperature array for initial average calculation
@@ -73,11 +71,6 @@ void loop() {
   OutputVoltage(outV, psuV, peltPin1);      //bigger & gray (max 14.5V and 14.7A).  UT15
 
   checkSafe(ave);                           //Checking safety mechanism
-
-  if(ave > tempThresh)
-    digitalWrite(LEDPin, LOW);
-  else
-    digitalWrite(LEDPin, HIGH);
 
   Serial.print(currentTemp); //prints the target temp. This is what the python script cares about
 
@@ -122,6 +115,7 @@ void checkSafe(double ave){
   if(changeCount >= 30 && reachedOn == false){  //if 30 counts met, turns the mechanism on (on state)
     changeCount = 0;
     reachedOn = true;
+    digitalWrite(LEDPin, HIGH);
   }
 
   if(reachedOn == true && ave >= badThresh)     //increase the counter to reach the "problem state". Must be in on state
@@ -135,7 +129,7 @@ void checkSafe(double ave){
     outV = 0;
     for(int i = 0; i < 3; i++)                //Signaling Python to email
       Serial.println("failure");
-      
+    digitalWrite(LEDPin, LOW);
   }
 }
 
