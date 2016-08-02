@@ -53,3 +53,4 @@ while(1):
         dt = time.time() - Start
         if(dt >= Serial_Handler.getOut_Period()): 
             onPeriod() 
+    Plotter.processEvents()

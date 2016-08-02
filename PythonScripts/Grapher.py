@@ -3,6 +3,8 @@ from pyqtgraph.Qt import QtGui, QtCore
 import numpy as np
 import time
 import pyqtgraph as pg
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 class Grapher:
     #Displays the past 8640 samples.
@@ -32,5 +34,25 @@ class Grapher:
     def plotData(self,x,y):
         self.xData.append(x) 
         self.yData.append(y)
-        self.curve.setData(list(self.xData),list(self.yData)) #Plotting the data
-        self.app.processEvents()   
+        self.curve.setData(list(self.xData),list(self.yData)) #Plotting the data   
+    
+    def processEvents(self):
+        self.app.processEvents()
+                
+    #Produce a good looking graph with matplotlib
+    #Also, export it to a PDF file
+    #Creates using the CSV file
+    
+    #http://stackoverflow.com/questions/11328958/matplotlib-pyplot-save-the-plots-into-a-pdf
+    #http://matplotlib.org/examples/pylab_examples/plotfile_demo.html
+    #http://stackoverflow.com/questions/15034996/how-to-use-plotfile-in-matplotlib
+    def produceGraph(self, path):
+        plt.figure()
+        plt.clf()
+        plt.plotfile(path, cols=(0, 1)) 
+        plt.ylabel('Temp(C)')
+
+        plt.title('Temp vs. Time')
+        pp = PdfPages('test.pdf')
+        pp.savefig()
+        pp.close()
