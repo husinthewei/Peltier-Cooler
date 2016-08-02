@@ -12,3 +12,9 @@ class FileWriter:
         with open('Logs\Log%s.csv'%(Program_Start_Time), 'ab') as csvfile: 
             writer = csv.writer(csvfile)
  	    writer.writerow([now, str(msg)])
+
+    def readCsv(self, path):
+        with open(path, 'rb') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                print row
