@@ -49,7 +49,7 @@ class Grapher:
     #http://stackoverflow.com/questions/15034996/how-to-use-plotfile-in-matplotlib
     def produceGraph(self, path):
         File_Writer = FileWriter.FileWriter()
-        File_Writer.readCsv(path)
+        #File_Writer.readCsv(path)
         fname = self.extractFileName(path)
         plt.figure()
         plt.clf()
@@ -60,16 +60,10 @@ class Grapher:
         pp = PdfPages('Graphs\%s.pdf'%fname)
         pp.savefig()
         pp.close()
-
+    
     def extractFileName(self, path):
-        lastSlash = 0                    #Removes the directory
-        for i in range(len(path)):      #Leaves file name
-            if str(path)[i:i+1] == "\\":
-                lastSlash = i
-        fname = str(path)[lastSlash + 1:len(path)]
-        firstPer = len(fname)           #Removes the file extension
-        for i in reversed(range(len(fname))):
-            if str(fname)[i:i+1] == ".":
-                firstPer = i
-        return fname[0:firstPer]
+        fname = path.split('\\')[-1]
+        fname = fname.split('.')[0]
+        return fname  
+        
         
