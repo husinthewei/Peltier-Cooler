@@ -13,8 +13,11 @@ class FileWriter:
             writer = csv.writer(csvfile)
  	    writer.writerow([now, str(msg)])
 
-    def readCsv(self, path):
+    def getCsvData(self, path):
+        Data = [[],[]]
         with open(path, 'rb') as f:
             reader = csv.reader(f)
             for row in reader:
-                print row
+                Data[0].append(row[0])
+                Data[1].append(row[1])
+        return Data

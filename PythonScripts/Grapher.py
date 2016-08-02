@@ -5,6 +5,7 @@ import time
 import pyqtgraph as pg
 import matplotlib.pyplot as plt
 import FileWriter
+import datetime
 from matplotlib.backends.backend_pdf import PdfPages
 
 class Grapher:
@@ -49,21 +50,31 @@ class Grapher:
     #http://stackoverflow.com/questions/15034996/how-to-use-plotfile-in-matplotlib
     def produceGraph(self, path):
         File_Writer = FileWriter.FileWriter()
-        #File_Writer.readCsv(path)
-        fname = self.extractFileName(path)
+        data = File_Writer.getCsvData(path)
+        startTime = data[0][0]
         plt.figure()
         plt.clf()
-        plt.plotfile(path, cols=(0, 1)) 
+        plt.ylim(-20, 30)
+        xData = self.extractTimeElapsed(data[0], startTime)
+        plt.plot(xData,data[1]) 
         plt.ylabel('Temp(C)')
-        #plt.locator_params(axis='x',nbins=10)
+        plt.xlabel('Hours since %s'%startTime)
         plt.title('Temp vs. Time')
+        fname = self.extractFileName(path)
         pp = PdfPages('Graphs\%s.pdf'%fname)
         pp.savefig()
         pp.close()
     
-    def extractFileName(self, path):
+    #Extract the file name from the path
+    def extractFileName(self, path): 
         fname = path.split('\\')[-1]
         fname = fname.split('.')[0]
-        return fname  
+        return fname
         
-        
+    def extractTimeElapsed(self, data, t0):
+        t0 = datetime.datetime.strptime(t0,"%Y-%m-%dT%H:%M:%S")         
+        for i in range(len(data)):
+            t = datetime.datetime.strptime(data[i],"%Y-%m-%dT%H:%M:%S")  
+            t = ((t-t0).total_seconds())/3600 #hours elapsed 
+            data[i] = t
+        return data      

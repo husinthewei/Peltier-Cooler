@@ -17,9 +17,12 @@ Failure_Emailer = Emailer.Emailer()
 Plotter = Grapher.Grapher(Serial_Handler.getStart_Time()) 
 
 #Handling program exit. Closes serial connection.
+#Also saves graph to pdf
 def SIGINT_handler(signal, frame): 
         print('Quitting program!')
         Serial_Handler.close() 
+        path = 'Logs\Log%s.csv'%(Serial_Handler.getStart_Time())
+        Plotter.produceGraph(path) 
         sys.exit(0)
         
 signal.signal(signal.SIGINT, SIGINT_handler)
