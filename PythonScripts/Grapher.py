@@ -41,13 +41,9 @@ class Grapher:
     def processEvents(self):
         self.app.processEvents()
                 
-    #Produce a good looking graph with matplotlib
+    #Produce a "good looking" graph with matplotlib
     #Also, export it to a PDF file
     #Creates using the CSV file
-    
-    #http://stackoverflow.com/questions/11328958/matplotlib-pyplot-save-the-plots-into-a-pdf
-    #http://matplotlib.org/examples/pylab_examples/plotfile_demo.html
-    #http://stackoverflow.com/questions/15034996/how-to-use-plotfile-in-matplotlib
     def produceGraph(self, path):
         File_Writer = FileWriter.FileWriter()
         data = File_Writer.getCsvData(path)
