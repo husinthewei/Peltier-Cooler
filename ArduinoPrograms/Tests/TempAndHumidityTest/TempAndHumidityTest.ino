@@ -10,7 +10,10 @@ void setup() {
 }
 
 void loop() {
-  delay(2000);
+  delay(100);
   float h = dht.readHumidity();
+  Serial.print(dht.readTemperature());
+  Serial.print("  ");
   Serial.println(h);
+  
 }
