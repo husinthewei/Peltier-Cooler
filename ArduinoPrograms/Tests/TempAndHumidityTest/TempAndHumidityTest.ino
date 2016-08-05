@@ -1,8 +1,5 @@
 #include <DHT.h>
-#define DHTPIN 2
-#define DHTTYPE DHT22
 
-DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
   Serial.begin(9600);

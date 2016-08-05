@@ -3,7 +3,6 @@ class TempHandlerH:
     #Temp tuple stores temperatures for average calculations
     def __init__(self):
         self.Temps = ()
-        self.Humidities = ()
         self.LastTempKnown = 22 
     
     def getLastTempKnown(self):
@@ -20,18 +19,10 @@ class TempHandlerH:
         except:
             pass      
             
-    #Records data to tuple for average calculations.            
-    def recordHumidity(self, hmdty):
-        try:
-            self.Humidities = self.Humidities + (float(hmdty),)
-        except:
-            pass
                     
     #Clears the tuple for new average calculations        
     def resetTemps(self):
         self.Temps = () 
-    def resetHumidities(self):
-        self.Humidities = ()
    
     #Calculate the average from the data
     def getTempAve(self): 
@@ -44,17 +35,6 @@ class TempHandlerH:
             return ave	
         else:
             return "No temperature data"
-   
-    #Calculate the average from the data
-    def getHumidityAve(self): 
-        if(len(self.Humidities) > 0):
-            sum = 0
-            for i in self.Humidities:
-                sum += i
-            ave = (sum / len(self.Humidities))
-            return ave	
-        else:
-            return "No humidity data"
                          
     #returns the best temperature to notify. Used for quick email
     def getBestTemp(self):
@@ -73,15 +53,17 @@ class TempHandlerH:
                 self.recordTemp(msg[0:i])
                 return msg[0:i] 
 
-    #Extracting humidity from an Arduino message
-    #The instantaneous temperature is the second "word" in the message
-    def extractHumidity(self, msg):
-        firstSpace = 0;
+    #Extracting a certain word number
+    #1: inside humidity
+    #2: outside humidity, 3: outside temp              
+    def getWord(self, msg, num):
+        spaceCount = 0;
+        start = 0;
         for i in range(len(msg)): 
-            if(msg[i:i+1] == " " and firstSpace != 0):
-                self.recordHumidity(msg[firstSpace + 1: i])
-                return msg[firstSpace + 1: i]
-            if(msg[i:i+1] == " " and firstSpace == 0): 
-                firstSpace = i
-
-        
+            if(msg[i:i+1] == " " and start != 0):
+                #self.recordHumidity(msg[firstSpace + 1: i])
+                return msg[start + 1: i]
+            if(msg[i:i+1] == " " and start == 0): 
+                spaceCount+=1     
+            if(msg[i:i+1] == " " and spaceCount == num):
+                start = i      

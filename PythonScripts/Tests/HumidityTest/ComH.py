@@ -12,6 +12,9 @@ import time
 #Objects created to handle different tasks
 Serial_Handler = SerialHandlerH.SerialHandlerH() 
 Temp_Handler = TempHandlerH.TempHandlerH() 
+Humidity_Handler = TempHandlerH.TempHandlerH()     #Kind of a hack way of doing things. 
+Humidity_Out_Handler = TempHandlerH.TempHandlerH() #Using the TempHandler class for humidities
+Temp_Out_Handler = TempHandlerH.TempHandlerH()     #The names may include temp, but may be used for humidity
 File_Writer = FileWriterH.FileWriterH() 
 Failure_Emailer = EmailerH.EmailerH() 
 Plotter = GrapherH.GrapherH(Serial_Handler.getStart_Time()) 
@@ -32,10 +35,12 @@ signal.signal(signal.SIGINT, SIGINT_handler)
 def onPeriod(): 
     global Start
     Start = time.time() 
-    msg = Temp_Handler.getTempAve() 
-    hmdty = Temp_Handler.getHumidityAve()
+    temp = Temp_Handler.getTempAve() 
+    hmdty = Humidity_Handler.getTempAve()
+    hmdtyOut = Humidity_Out_Handler.getTempAve()
+    tempOut = Temp_Out_Handler.getTempAve()
     Temp_Handler.resetTemps() 
-    print ("%s    %s    %s" %(now, msg, hmdty)) 
+    print ("%s   Temp: %.2f   Hmdty: %.2f   HmdtyOut: %.2f   TempOut: %.2f" %(now,temp,hmdty,hmdtyOut,tempOut)) 
     if(msg != "No temperature data"): 
         #File_Writer.writeToTxt(Serial_Handler.getStart_Time(), now, msg) 
         File_Writer.writeToCsv(Serial_Handler.getStart_Time(), now, msg) 
@@ -52,7 +57,10 @@ while(1):
         
     if(len(msg)>0 and "failure" not in str(msg)):
         now= time.strftime("%Y-%m-%dT%H:%M:%S")
-        Temp_Handler.extractHumidity(msg) 
+        Humidity_Handler.recordTemp(Humidity_Handler.getWord(msg,1)) #Quick hack by using recordTemp instead of
+        Humidity_Out_Handler.recordTemp(Humidity_Out_Handler.getWord(msg,2)) #making a recordHumidity
+        Temp_Out_Handler.recordTemp(Temp_Out_Handler.getWord(msg,3))
+        
         msg = Temp_Handler.extractTemp(msg)
     
         dt = time.time() - Start

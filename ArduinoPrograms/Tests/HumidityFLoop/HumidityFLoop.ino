@@ -36,6 +36,8 @@ int LEDPin = 10;          //LED that turns on during on state. Off signals a pro
 #define DHTPIN 2
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
+#define DHTPINOUT 4
+DHT dhtOUT(DHTPINOUT, DHTTYPE);
 //
 //
 void setup() {
@@ -51,6 +53,7 @@ void setup() {
   Last = readTemperature(); 
 
   dht.begin();
+  dhtOUT.begin();
   
   //fills temperature array for initial average calculation
   double temp = readTemperature(); 
@@ -83,7 +86,12 @@ void loop() {
 
   Serial.print(' ');
   Serial.print(dht.readHumidity()); //prints the humidity as the second word
-  
+
+  Serial.print(' ');
+  Serial.print(dhtOUT.readHumidity()); //prints the humidity as the second word
+
+  Serial.print(' ');
+  Serial.print(dhtOUT.readTemperature()); //prints the humidity as the second word    
   //The python script ignores all of this.
   double raw = analogRead(A0); 
   Serial.print("    Raw: ");
