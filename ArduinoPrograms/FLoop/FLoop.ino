@@ -27,8 +27,8 @@ double psuV = 12;
 float c;
 //mechanism to turn peltiers off if the temp gets too hot (e.g. fan turns off or some failure)
 int changeCount = 0;          //make sure at least 30 readings before switching states
-double onThresh = -8;        //temperature threshold to turn on this mechanism. (on state)
-double badThresh = 0;       //temperature threshold to signal that something bad is happening(bad state)
+double onThresh = 2;        //temperature threshold to turn on this mechanism. (on state)
+double badThresh = 10;       //temperature threshold to signal that something bad is happening(bad state)
 boolean reachedOn = false; //signals on state
 int LEDPin = 10;          //LED that turns on during on state. Off signals a problem.
 //

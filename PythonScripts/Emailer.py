@@ -7,8 +7,8 @@ class Emailer:
         self.EmailSent = email_sent 
         self.fromaddr = 'peltier1w8cooler@gmail.com'
         self.password = 'somethingbadhappened'
-        self.toaddrs = ['wei4wei@gmail.com', 'smcnama1@terpmail.umd.edu'] #testing emails
-        #self.toaddrs = ['wei4wei@gmail.com', 'smcnama1@terpmail.umd.edu', 'mbreilly@hep.upenn.edu', 'mayers408@gmail.com', 'eress@sas.upenn.edu'] #all emails
+        #self.toaddrs = ['wei4wei@gmail.com'] #'smcnama1@terpmail.umd.edu'] #testing emails
+        self.toaddrs = ['wei4wei@gmail.com', 'mbreilly@hep.upenn.edu', 'mayers408@gmail.com', 'eress@sas.upenn.edu', 'davidriv@sas.upenn.edu'] #all emails
 
     #Sending emails if the arduino sends a failure message (i.e. "failure"). 
     #This happens when the circuit starts to heat up, which may indicate that the fan failed or something else failed.
@@ -27,7 +27,7 @@ class Emailer:
             "To: %s"%addr,
             "Subject: Failure",
             "",
-            "Something failed in the peltier setup. Possibly check it out if you are around. The last known temp is %sC. This may not be urgent; the Peltiers have already been turned off."%temp
+            "Something failed in the peltier setup. Please check it out (in room 2W2) if you are around. The last known temp is %sC."%temp
             ])
             try:
                 server.sendmail(self.fromaddr, addr, msg)
