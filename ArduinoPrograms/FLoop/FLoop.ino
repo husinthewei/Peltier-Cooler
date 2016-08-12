@@ -12,7 +12,7 @@ double kD = 0.6;
 double ScaleFactor = 1;
 //Average calculation variables.
 //Len 10 means over 1 second
-const int len = 10; 
+const int len+++++++ = 10; 
 double prevTemps[len]; 
 double averageTemp;
 //If there are enough "outliers"/"bad readings", maybe they are actually correct. 
