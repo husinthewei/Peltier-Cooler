@@ -7,8 +7,8 @@ class Emailer:
         self.EmailSent = email_sent 
         self.fromaddr = 'peltier1w8cooler@gmail.com'
         self.password = 'somethingbadhappened'
-        #self.toaddrs = ['wei4wei@gmail.com'] #'smcnama1@terpmail.umd.edu'] #testing emails
-        self.toaddrs = ['wei4wei@gmail.com', 'mbreilly@hep.upenn.edu', 'mayers408@gmail.com', 'eress@sas.upenn.edu', 'davidriv@sas.upenn.edu'] #all emails
+        self.toaddrs = ['wei4wei@gmail.com'] #'smcnama1@terpmail.umd.edu'] #testing emails
+        #self.toaddrs = ['wei4wei@gmail.com', 'mbreilly@hep.upenn.edu', 'mayers408@gmail.com', 'eress@sas.upenn.edu', 'davidriv@sas.upenn.edu'] #all emails
 
     #Sending emails if the arduino sends a failure message (i.e. "failure"). 
     #This happens when the circuit starts to heat up, which may indicate that the fan failed or something else failed.
