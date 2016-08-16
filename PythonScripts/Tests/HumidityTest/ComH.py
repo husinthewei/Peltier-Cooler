@@ -43,7 +43,7 @@ def onPeriod():
     print ("%s   Temp: %.2f   Hmdty: %.2f   HmdtyOut: %.2f   TempOut: %.2f" %(now,temp,hmdty,hmdtyOut,tempOut)) 
     if(msg != "No temperature data"): 
         #File_Writer.writeToTxt(Serial_Handler.getStart_Time(), now, msg) 
-        File_Writer.writeToCsv(Serial_Handler.getStart_Time(), now, msg) 
+        File_Writer.writeToCsv(Serial_Handler.getStart_Time(), now, msg, hmdty, hmdtyOut, tempOut) 
         Plotter.plotData(float((time.time()-Serial_Handler.getStart_Time_Long())/3600), float(msg)) 
       
       

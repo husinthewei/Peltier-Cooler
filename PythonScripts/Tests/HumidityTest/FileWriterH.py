@@ -8,10 +8,10 @@ class FileWriterH:
 
     #Outputs data into a csv file. Sent to a directory named "Logs" and includes a timestamp. 
     #MUST HAVE "Logs" FOLDER IN SAME DIRECTORY AS PYTHON SCRIPT
-    def writeToCsv(self, Program_Start_Time, now, msg):
+    def writeToCsv(self, Program_Start_Time, now, msg, humidout, humidin, tempout):
         with open('Logs\Log%s.csv'%(Program_Start_Time), 'ab') as csvfile: 
             writer = csv.writer(csvfile)
- 	    writer.writerow([now, str(msg)])
+ 	    writer.writerow([now, str(msg), str(humidout),str(humidin), str(tempout)])
 
     def getCsvData(self, path):
         Data = [[],[]]
