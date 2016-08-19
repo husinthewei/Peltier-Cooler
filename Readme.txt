@@ -22,7 +22,8 @@ How to run Com.py(NOTE: CURRENTLY ON WORKS ON WINDOWS):
 	  In cmd, cd to the directory of the file downloaded and type: python get-pip.py
 	*pyserial:
 	  After pip is installed, type in cmd: python -m pip install pyserial
-
+	*pyqtgraph
+	  After pip is installed, type in cmd: python -m pip install pyserial
   Procedure 1 (command line)-
 	1. cd to the directory of the python script. Ex: cd C:\Users\Your_Username\Documents\Github\Peltier-Cooler\PythonScripts
 	2. type: python -B Com.py
