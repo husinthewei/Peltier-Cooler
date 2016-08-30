@@ -9,6 +9,7 @@ class SerialHandler:
         self.Start_Time = time.strftime("%Y%m%dT%H%M%S") 
         self.Start_Time_Long = time.time() 
         self.createConnection()
+        self.SendMessages = True
         self.promptOutputPeriod() 
       
     #Having user select the correct COM port for the Arduino  
@@ -57,8 +58,9 @@ class SerialHandler:
         return msg
     
     def writeLine(self, msg):
-        self.ser.write(msg)
-    
+        if self.SendMessages:
+            self.ser.write(msg)
+            
     #Close serial connection
     def close(self): 
         self.ser.close()

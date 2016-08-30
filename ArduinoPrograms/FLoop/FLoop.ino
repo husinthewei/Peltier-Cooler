@@ -10,6 +10,7 @@ double kP = 20;
 double kI = 0.1; 
 double kD = 0.6; 
 double ScaleFactor = 1;
+int drive = 0; //Current drive value is 0, so no PID is used. If using PID, comment this line out
 //Average calculation variables.
 //Len 10 means over 1 second
 const int len = 10; 
@@ -31,7 +32,8 @@ double onThresh = -8;        //temperature threshold to turn on this mechanism. 
 double badThresh = 0;       //temperature threshold to signal that something bad is happening(bad state)
 boolean reachedOn = false; //signals on state
 int LEDPin = 10;          //LED that turns on during on state. Off signals a problem.
-//
+//Code to slowly ramp the MOSFET's on
+  boolean MosfetsOn = false;
 //
 void setup() {
   pinMode(peltPin, OUTPUT); 
@@ -58,30 +60,38 @@ void loop() {
   if(badReading(currentTemp)) 
     currentTemp = getAve();                   //using average if current reading is "outlier"
   else
-    recordTemp(currentTemp); 
-  
-  int drive = 0;                             //Current drive value is 0, so no PID is used. If using PID, comment this line out
+    recordTemp(currentTemp);                            
     
   //*Uncomment below part to do PID stuff
   //int drive = getPID();                   //calculates what drive value (out of 255) to use for PWM. Proportional to duty cycle (i.e. 51/255 = 0.2, meaning 20% duty cycle)
   //analogWrite(peltPin, drive);            //writes drive value to small Peltier
   //analogWrite(peltPin1, drive);           //writes drive value to large Peltier
 
-  OutputVoltage(outV, psuV, peltPin);       // smaller & orange (max 14.4V and 6.4A). TEC1-12706
-  OutputVoltage(outV, psuV, peltPin1);      //bigger & gray (max 14.5V and 14.7A).  UT15
-
+  //testing serial output from the python
+  String inMsg = Serial.readString();
+  if(inMsg == "Mosfets_On"){
+    MosfetsOn = HIGH;
+  }
+  if(inMsg == "Mosfets_Off"){
+    digitalWrite(LEDPin, LOW);
+    MosfetsOn = LOW;
+    drive = 0;
+  }
+  
+  if(MosfetsOn){
+    digitalWrite(LEDPin, HIGH);
+    drive = constrain(drive + 1, 0, 255);
+  }
+    
+  //OutputVoltage(outV, psuV, peltPin);       // smaller & orange (max 14.4V and 6.4A). TEC1-12706
+  analogWrite(peltPin, drive); 
+  analogWrite(peltPin1, drive); 
   checkSafe(ave);                           //Checking safety mechanism
 
   Serial.print(currentTemp); //prints the target temp. This is what the python script cares about
 
-  //testing serial output from the python
-  String inMsg = Serial.readString();
-  if(inMsg == "Mosfets_On")
-    digitalWrite(LEDPin, HIGH);
-  if(inMsg == "Mosfets_Off")
-    digitalWrite(LEDPin, LOW);
 
-
+  
   //The python script ignores all of this.
   double raw = analogRead(A0); 
   Serial.print("    Raw: ");

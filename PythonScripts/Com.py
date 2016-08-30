@@ -21,8 +21,8 @@ Plotter = Grapher.Grapher(Serial_Handler.getStart_Time())
 #Also saves graph to pdf
 def SIGINT_handler(signal, frame): 
         print('Quitting program!')
-        for i in range(5):
-            Serial_Handler.writeLine("Mosfets_Off")
+        Serial_Handler.SendMessages = False
+        Serial_Handler.ser.write("Mosfets_Off")
         Serial_Handler.close() 
         path = 'Logs\Log%s.csv'%(Serial_Handler.getStart_Time())
         Plotter.produceGraph(path) 
