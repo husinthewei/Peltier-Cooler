@@ -67,25 +67,28 @@ void loop() {
   //analogWrite(peltPin, drive);            //writes drive value to small Peltier
   //analogWrite(peltPin1, drive);           //writes drive value to large Peltier
 
-  //testing serial output from the python
+
+  //Slowly ramps up the Mosfet's (to max power in ~30 seconds).
+  //Receives and sends messages to Python
   String inMsg = Serial.readString();
   if(inMsg == "Mosfets_On"){
     MosfetsOn = HIGH;
   }
   if(inMsg == "Mosfets_Off"){
     digitalWrite(LEDPin, LOW);
+    for(int i = 0; i < 3; i++)
+      Serial.println("Fets_Off"); //Tell the python that the message was received (and Mosfet's have been turned off)
     MosfetsOn = LOW;
-    drive = 0;
+    drive = 0;  //currently using drive to slowly ramp up V to Peltier's
   }
-  
   if(MosfetsOn){
     digitalWrite(LEDPin, HIGH);
-    drive = constrain(drive + 1, 0, 255);
-  }
-    
+    drive = constrain(drive + 1, 0, 255); //currently using drive to slowly ramp up V to Peltier's
+  }  
   //OutputVoltage(outV, psuV, peltPin);       // smaller & orange (max 14.4V and 6.4A). TEC1-12706
-  analogWrite(peltPin, drive); 
+  analogWrite(peltPin, drive);              //currently using drive to slowly ramp up V to Peltier's
   analogWrite(peltPin1, drive); 
+  
   checkSafe(ave);                           //Checking safety mechanism
 
   Serial.print(currentTemp); //prints the target temp. This is what the python script cares about

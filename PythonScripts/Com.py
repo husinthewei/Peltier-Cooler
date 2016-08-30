@@ -22,7 +22,9 @@ Plotter = Grapher.Grapher(Serial_Handler.getStart_Time())
 def SIGINT_handler(signal, frame): 
         print('Quitting program!')
         Serial_Handler.SendMessages = False
-        Serial_Handler.ser.write("Mosfets_Off")
+        while("Fets_Off" not in Serial_Handler.readLine()): 
+            Serial_Handler.ser.write("Mosfets_Off")
+            print "waiting for Mosfets to turn off"
         Serial_Handler.close() 
         path = 'Logs\Log%s.csv'%(Serial_Handler.getStart_Time())
         Plotter.produceGraph(path) 
@@ -53,7 +55,7 @@ while(1):
     if("failure" in str(msg) and Failure_Emailer.getEmailSent() == False): 
         Failure_Emailer.sendFailureEmail(Temp_Handler.getBestTemp()) 
         
-    if(len(msg)>0 and "failure" not in str(msg)):
+    if(len(msg)>0 and "failure" not in str(msg) and "Fets_Off" not in str(msg)):
         now= time.strftime("%Y-%m-%dT%H:%M:%S") 
         msg = Temp_Handler.extractTemp(msg)
     
