@@ -46,6 +46,7 @@ Serial_Handler.syncToBoard()
 #Main loop
 while(1):                      
     msg = Serial_Handler.readLine() 
+    Serial_Handler.writeLine("test")
     if("failure" in str(msg) and Failure_Emailer.getEmailSent() == False): 
         Failure_Emailer.sendFailureEmail(Temp_Handler.getBestTemp()) 
         

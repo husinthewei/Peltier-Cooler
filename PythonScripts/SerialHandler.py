@@ -56,6 +56,9 @@ class SerialHandler:
             print "Serial Error"  
         return msg
     
+    def writeLine(self, msg):
+        self.ser.write(msg)
+    
     #Close serial connection
     def close(self): 
         self.ser.close()

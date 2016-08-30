@@ -74,6 +74,11 @@ void loop() {
 
   Serial.print(currentTemp); //prints the target temp. This is what the python script cares about
 
+  //testing serial output from the python
+  if(Serial.readString() == "test")
+    digitalWrite(LEDPin, HIGH);
+
+
   //The python script ignores all of this.
   double raw = analogRead(A0); 
   Serial.print("    Raw: ");
@@ -115,7 +120,7 @@ void checkSafe(double ave){
   if(changeCount >= 30 && reachedOn == false){  //if 30 counts met, turns the mechanism on (on state)
     changeCount = 0;
     reachedOn = true;
-    digitalWrite(LEDPin, HIGH);
+    //digitalWrite(LEDPin, HIGH);
   }
 
   if(reachedOn == true && ave >= badThresh)     //increase the counter to reach the "problem state". Must be in on state
@@ -129,7 +134,7 @@ void checkSafe(double ave){
     outV = 0;
     for(int i = 0; i < 3; i++)                //Signaling Python to email
       Serial.println("failure");
-    digitalWrite(LEDPin, LOW);
+    //digitalWrite(LEDPin, LOW);
   }
 }
 
