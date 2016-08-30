@@ -75,8 +75,11 @@ void loop() {
   Serial.print(currentTemp); //prints the target temp. This is what the python script cares about
 
   //testing serial output from the python
-  if(Serial.readString() == "test")
+  String inMsg = Serial.readString();
+  if(inMsg == "Mosfets_On")
     digitalWrite(LEDPin, HIGH);
+  if(inMsg == "Mosfets_Off")
+    digitalWrite(LEDPin, LOW);
 
 
   //The python script ignores all of this.

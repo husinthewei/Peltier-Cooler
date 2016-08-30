@@ -31,13 +31,13 @@ class SerialHandler:
             print 'Port not in range'
             exit(1)
         self.ser=serial.Serial(port=port_names[int(user_port_selection)],baudrate=9600,timeout=1)
-        
+    
     #Having user select how frequently to output data   
     def promptOutputPeriod(self):
         self.Out_Period = 0
         while(self.Out_Period <0.1): 
             self.Out_Period = input('Output data how often(seconds)? Minimum 0.1s    ')
-            
+        
     #Makes sure this script does not start in the middle of one of the Arduino output lines
     def syncToBoard(self):
         mycmd = ""

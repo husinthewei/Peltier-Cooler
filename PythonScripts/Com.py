@@ -15,11 +15,14 @@ Temp_Handler = TempHandler.TempHandler()
 File_Writer = FileWriter.FileWriter() 
 Failure_Emailer = Emailer.Emailer() 
 Plotter = Grapher.Grapher(Serial_Handler.getStart_Time()) 
+    
 
 #Handling program exit. Closes serial connection.
 #Also saves graph to pdf
 def SIGINT_handler(signal, frame): 
         print('Quitting program!')
+        for i in range(5):
+            Serial_Handler.writeLine("Mosfets_Off")
         Serial_Handler.close() 
         path = 'Logs\Log%s.csv'%(Serial_Handler.getStart_Time())
         Plotter.produceGraph(path) 
@@ -42,11 +45,11 @@ def onPeriod():
       
       
 Start = time.time()             
-Serial_Handler.syncToBoard()	
+Serial_Handler.syncToBoard()	    
 #Main loop
-while(1):                      
+while(1):          
+    Serial_Handler.writeLine("Mosfets_On")  #Tell arduino to start ramping MOSFETS up        
     msg = Serial_Handler.readLine() 
-    Serial_Handler.writeLine("test")
     if("failure" in str(msg) and Failure_Emailer.getEmailSent() == False): 
         Failure_Emailer.sendFailureEmail(Temp_Handler.getBestTemp()) 
         
